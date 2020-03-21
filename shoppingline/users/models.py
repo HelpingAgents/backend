@@ -33,6 +33,13 @@ class User(AbstractBaseUser):
     phone_number = models.CharField(
         verbose_name="Phone Number", max_length=15, unique=True,
     )
+    twilio_worker_sid = models.CharField(
+        verbose_name="Twilio Worker SID",
+        max_length=34,
+        unique=True,
+        null=True,
+        blank=True,
+    )
     first_name = models.CharField(_("first name"), max_length=30, blank=True)
     last_name = models.CharField(_("last name"), max_length=30, blank=True)
 

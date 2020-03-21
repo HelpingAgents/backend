@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, status
 from django.contrib.auth import login, logout
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
 from shoppingline.users.models import User
@@ -49,10 +48,6 @@ class ProfileUpdateView(generics.UpdateAPIView):
 
     def get_object(self):
         return self.request.user
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProfileUpdateView, self).dispatch(request, *args, **kwargs)
 
 
 @api_view(["GET"])
