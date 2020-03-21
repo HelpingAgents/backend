@@ -52,6 +52,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "shoppingline.api.utils.DisableCSRF",
 ]
 
 ROOT_URLCONF = "shoppingline.urls"
@@ -125,5 +126,6 @@ TWILIO_SERVICE_ID = env("TWILIO_SERVICE_ID")
 TWILIO_WORKSPACE_SID = env("TWILIO_WORKSPACE_SID")
 TWILIO_ACTIVITY_OFFLINE_SID = env("TWILIO_ACTIVITY_OFFLINE_SID")
 TWILIO_ACTIVITY_AVAILABLE_SID = env("TWILIO_ACTIVITY_AVAILABLE_SID")
+TWILIO_WORKFLOW_SID = env("TWILIO_WORKFLOW_SID")
 
 AUTH_USER_MODEL = "users.User"
