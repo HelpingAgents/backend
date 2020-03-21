@@ -1,10 +1,12 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, status
 from django.contrib.auth import login, logout
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.conf import settings
+from twilio.twiml.voice_response import VoiceResponse
 
 from shoppingline.users.models import User
 from shoppingline.api import serializers
@@ -50,12 +52,28 @@ class ProfileUpdateView(generics.UpdateAPIView):
     def get_object(self):
         return self.request.user
 
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProfileUpdateView, self).dispatch(request, *args, **kwargs)
-
 
 @api_view(["GET"])
 def logout(request):
     logout(request)
     return Response()
+
+
+@api_view(["GET", "POST"])
+@permission_classes([])
+def enqueue_call(request):
+    resp = VoiceResponse()
+    resp.say("Hallo, dein Anruf wird weitergeleitet", language="de-DE")
+    resp.enqueue(None, workflowSid=settings.TWILIO_WORKFLOW_SID)
+    return HttpResponse(str(resp), content_type="application/xml")
+
+
+@api_view(["GET", "POST"])
+@permission_classes([])
+def assignment(request):
+    """ Task assignment """
+    response = {
+        "instruction": "dequeue",
+        "post_work_activity_sid": settings.TWILIO_ACTIVITY_AVAILABLE_SID,
+    }
+    return Response(response)
