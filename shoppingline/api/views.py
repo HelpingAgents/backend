@@ -46,6 +46,9 @@ class ProfileUpdateView(generics.UpdateAPIView):
     def get_object(self):
         return self.request.user
 
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ProfileUpdateView, self).dispatch(request, *args, **kwargs)
 
 @api_view(["GET"])
 def logout(request):
