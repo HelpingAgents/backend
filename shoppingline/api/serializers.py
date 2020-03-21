@@ -32,14 +32,12 @@ class LoginRequestSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     code = serializers.CharField()
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
+    name = serializers.CharField()
 
     def validate(self, attrs):
         phone_number = attrs.get("phone_number")
         code = attrs.get("code")
-        first_name = attrs.get("first_name")
-        last_name = attrs.get("last_name")
+        name = attrs.get("name")
         try:
             verification_check = client.verify.services(
                 settings.TWILIO_SERVICE_ID
@@ -55,17 +53,14 @@ class LoginSerializer(serializers.Serializer):
             worker = client.taskrouter.workspaces(
                 settings.TWILIO_WORKSPACE_SID
             ).workers.create(
-                friendly_name=f"{first_name} {last_name}",
+                friendly_name=name,
                 attributes=json.dumps(
                     {"contact_uri": phone_number, "products": ["ProgrammableSMS"]}
                 ),
             )
 
             user = User.objects.create(
-                phone_number=phone_number,
-                twilio_worker_sid=worker.sid,
-                first_name=first_name,
-                last_name=last_name,
+                phone_number=phone_number, twilio_worker_sid=worker.sid, name=name,
             )
 
         if not user.is_active:
@@ -81,24 +76,19 @@ class UserAuthInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            "id",
             "phone_number",
-            "first_name",
-            "last_name",
+            "name",
             "accepting_calls",
         )
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(required=False)
-    last_name = serializers.CharField(required=False)
+    name = serializers.CharField(required=False)
     accepting_calls = serializers.BooleanField(required=False)
 
     def update(self, instance, validated_data):
-        if "first_name" in validated_data:
-            instance.first_name = validated_data.get("first_name")
-        if "last_name" in validated_data:
-            instance.last_name = validated_data.get("last_name")
+        if "name" in validated_data:
+            instance.name = validated_data.get("name")
         if "accepting_calls" in validated_data:
             previous_accepting_calls = instance.accepting_calls
             instance.accepting_calls = validated_data.get("accepting_calls")
@@ -118,13 +108,12 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
                 .update(activity_sid=new_activity_sid)
             )
 
-        instance.save(update_fields=["first_name", "last_name", "accepting_calls"])
+        instance.save(update_fields=["name", "accepting_calls"])
         return instance
 
     class Meta:
         model = User
         fields = (
-            "first_name",
-            "last_name",
+            "name",
             "accepting_calls",
         )
