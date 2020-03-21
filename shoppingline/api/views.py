@@ -77,3 +77,16 @@ def assignment(request):
         "post_work_activity_sid": settings.TWILIO_ACTIVITY_AVAILABLE_SID,
     }
     return Response(response)
+
+@api_view(["POST"])
+@permission_classes([])
+def events(request):
+    event_type = request.POST.get("EventType")
+    workspace_sid = request.POST.get("WorkspaceSid")
+    if event_type == "task.wrapup" and workspace_sid == settings.TWILIO_WORKSPACE_SID:
+        task_sid = request.POST.get("TaskSid")
+        serializers.client.taskrouter.workspaces(settings.TWILIO_WORKSPACE_SID).tasks(task_sid).update(
+            assignment_status= 'completed',
+            reason='Call completed via Shoppingline'
+        )
+    return Response()
