@@ -3,7 +3,7 @@ from django.urls import include, path
 
 from shoppingline.api import views
 
-app_name="api"
+app_name = "api"
 
 urlpatterns = [
     path("auth/login/request/", views.LoginRequestView.as_view()),

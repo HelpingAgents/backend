@@ -4,9 +4,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, status
 from django.contrib.auth import login, logout
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from shoppingline.users.models import User
 from shoppingline.api import serializers
+
 
 class LoginRequestView(generics.CreateAPIView):
     serializer_class = serializers.LoginRequestSerializer
@@ -18,6 +20,7 @@ class LoginRequestView(generics.CreateAPIView):
         )
         serializer.is_valid(raise_exception=True)
         return Response()
+
 
 class LoginView(generics.CreateAPIView):
     serializer_class = serializers.LoginSerializer
@@ -50,6 +53,7 @@ class ProfileUpdateView(generics.UpdateAPIView):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(ProfileUpdateView, self).dispatch(request, *args, **kwargs)
+
 
 @api_view(["GET"])
 def logout(request):

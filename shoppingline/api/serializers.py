@@ -12,23 +12,21 @@ from shoppingline.users.models import User
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
+
 class LoginRequestSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
+
     def validate(self, attrs):
         phone_number = attrs.get("phone_number")
         try:
-            client.verify \
-            .services(settings.TWILIO_SERVICE_ID) \
-            .verifications \
-            .create(to=phone_number, channel='sms')
+            client.verify.services(settings.TWILIO_SERVICE_ID).verifications.create(
+                to=phone_number, channel="sms"
+            )
         except TwilioRestException as err:
-            raise exceptions.ValidationError({
-                "phone_number": err.msg
-            })
+            raise exceptions.ValidationError({"phone_number": err.msg})
         except Exception as err:
             raise exceptions.ValidationError(err)
         return attrs
-
 
 
 class LoginSerializer(serializers.Serializer):
@@ -39,32 +37,26 @@ class LoginSerializer(serializers.Serializer):
         phone_number = attrs.get("phone_number")
         code = attrs.get("code")
         try:
-            verification_check = client.verify \
-                .services(settings.TWILIO_SERVICE_ID) \
-                .verification_checks.create(to=phone_number, code=code)
+            verification_check = client.verify.services(
+                settings.TWILIO_SERVICE_ID
+            ).verification_checks.create(to=phone_number, code=code)
         except TwilioRestException as err:
-            raise exceptions.ValidationError({
-                "phone_number": "Verification expired"
-            })
+            raise exceptions.ValidationError({"phone_number": "Verification expired"})
         if verification_check.status != "approved":
-            raise exceptions.ValidationError({
-                "phone_number": "Internal API error."
-            })
+            raise exceptions.ValidationError({"phone_number": "Internal API error."})
 
         user = User.objects.filter(phone_number__iexact=phone_number).first()
 
         if not user:
             user = User.objects.create(phone_number=phone_number)
 
-
         if not user.is_active:
-            raise exceptions.ValidationError({
-                "phone_number": "Account is not activated."
-            })
+            raise exceptions.ValidationError(
+                {"phone_number": "Account is not activated."}
+            )
 
         attrs["user"] = user
         return attrs
-
 
 
 class UserAuthInfoSerializer(serializers.ModelSerializer):
@@ -77,6 +69,7 @@ class UserAuthInfoSerializer(serializers.ModelSerializer):
             "last_name",
             "accepting_calls",
         )
+
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField()

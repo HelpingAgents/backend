@@ -1,8 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
-)
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
+
 
 class MyUserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -11,11 +10,9 @@ class MyUserManager(BaseUserManager):
         birth and password.
         """
         if not email:
-            raise ValueError('Users must have an email address')
+            raise ValueError("Users must have an email address")
 
-        user = self.model(
-            phone_number=email,
-        )
+        user = self.model(phone_number=email,)
 
         user.set_password(password)
         user.save(using=self._db)
@@ -26,22 +23,18 @@ class MyUserManager(BaseUserManager):
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
-        user = self.create_user(
-            phone_number=email,
-            password=password,
-        )
+        user = self.create_user(phone_number=email, password=password,)
         user.is_admin = True
         user.save(using=self._db)
         return user
 
+
 class User(AbstractBaseUser):
     phone_number = models.CharField(
-        verbose_name='Phone Number',
-        max_length=15,
-        unique=True,
+        verbose_name="Phone Number", max_length=15, unique=True,
     )
-    first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    first_name = models.CharField(_("first name"), max_length=30, blank=True)
+    last_name = models.CharField(_("last name"), max_length=30, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -50,7 +43,7 @@ class User(AbstractBaseUser):
 
     objects = MyUserManager()
 
-    USERNAME_FIELD = 'phone_number'
+    USERNAME_FIELD = "phone_number"
     REQUIRED_FIELDS = []
 
     def __str__(self):
