@@ -40,8 +40,7 @@ class User(AbstractBaseUser):
         null=True,
         blank=True,
     )
-    first_name = models.CharField(_("first name"), max_length=30, blank=True)
-    last_name = models.CharField(_("last name"), max_length=30, blank=True)
+    name = models.CharField(_("Name"), max_length=30, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
