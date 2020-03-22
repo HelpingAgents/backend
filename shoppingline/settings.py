@@ -126,7 +126,18 @@ if not DEBUG:
         "rest_framework.renderers.JSONRenderer"
     ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = [
+    "https://helpingagents.de"
+]
+
+CORS_ORIGIN_REGEX_WHITELIST = [
+    r"^https://.*\.now\.sh$",
+]
+
+
+CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = "None"
 
 TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = env("TWILIO_AUTH_TOKEN")
