@@ -12,6 +12,7 @@ urlpatterns = [
     path("auth/profile/info/", views.AuthInfoView.as_view()),
     path("auth/profile/update/", views.ProfileUpdateView.as_view()),
     path("webhooks/enqueue-call/", views.enqueue_call),
+    path("webhooks/enqueue-wait-url/", views.enqueue_wait_url),
     path("webhooks/assignment/", views.assignment),
     path("webhooks/events", views.events),
 ]
