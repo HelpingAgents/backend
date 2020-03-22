@@ -10,6 +10,7 @@ from twilio.twiml.voice_response import VoiceResponse
 
 from shoppingline.users.models import User
 from shoppingline.api import serializers
+from shoppingline.api.utils import get_random_corona_fact, say
 
 
 class LoginRequestView(generics.CreateAPIView):
@@ -59,12 +60,43 @@ def logout(request):
     return Response()
 
 
-@api_view(["GET", "POST"])
+@api_view(["POST"])
 @permission_classes([])
 def enqueue_call(request):
     resp = VoiceResponse()
-    resp.say("Hallo, dein Anruf wird weitergeleitet", language="de-DE")
-    resp.enqueue(None, workflowSid=settings.TWILIO_WORKFLOW_SID)
+    resp.enqueue(
+        None,
+        workflowSid=settings.TWILIO_WORKFLOW_SID,
+        wait_url="https://helpingagents.herokuapp.com/api/webhooks/enqueue-wait-url/",
+    )
+    return HttpResponse(str(resp), content_type="application/xml")
+
+
+@api_view(["POST"])
+@permission_classes([])
+def enqueue_wait_url(request):
+    resp = VoiceResponse()
+    say(
+        resp,
+        "Willkommen bei der",
+    )
+    resp.say(
+        "Helping Agents",
+    )
+    say(
+        resp,
+        "Hotline! Wir werden Ihren Aufruf an einen Freiwilligen vermitteln.",
+    )
+    pos = request.POST.get("QueuePosition")
+    if int(pos) < 2:
+        say(
+            resp, "Gleich sind Sie dran. Bitte warten Sie noch einen Augenblick",
+        )
+    else:
+        say(resp, f"Sie sind Position {pos} in der Warteschlange")
+    resp.pause(length=2)
+    say(resp, get_random_corona_fact())
+    resp.play("http://com.twilio.music.classical.s3.amazonaws.com/ClockworkWaltz.mp3")
     return HttpResponse(str(resp), content_type="application/xml")
 
 
