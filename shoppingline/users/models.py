@@ -53,7 +53,9 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.phone_number
+        if not self.name:
+            return self.phone_number
+        return f"{self.name} ({self.phone_number})"
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
