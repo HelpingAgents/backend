@@ -53,7 +53,7 @@ class ProfileUpdateView(generics.UpdateAPIView):
         return self.request.user
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def logout(request):
     logout(request)
     return Response()
