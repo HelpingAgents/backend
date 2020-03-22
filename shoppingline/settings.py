@@ -129,6 +129,7 @@ if not DEBUG:
 CORS_ORIGIN_WHITELIST = [
     "https://helpingagents.de",
     "http://localhost:4200",
+    "https://localhost:4200",
 ]
 
 CORS_ORIGIN_REGEX_WHITELIST = [
