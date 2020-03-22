@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, status
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout as django_logout
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from twilio.twiml.voice_response import VoiceResponse
@@ -56,7 +56,7 @@ class ProfileUpdateView(generics.UpdateAPIView):
 
 @api_view(["POST"])
 def logout(request):
-    logout(request)
+    django_logout(request)
     return Response()
 
 
