@@ -8,6 +8,7 @@ from rest_framework import serializers
 from django.conf import settings
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
+import phonenumbers
 from shoppingline.users.models import User
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -18,6 +19,20 @@ class LoginRequestSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         phone_number = attrs.get("phone_number")
+        try:
+            parsed_phone_number = phonenumbers.parse(phone_number)
+            if parsed_phone_number.country_code != 49:
+                raise exceptions.ValidationError(
+                    {
+                        "phone_number": "Ungültige Ländervorwahl, nur Deutschland wird aktuell unterstützt."
+                    }
+                )
+        except phonenumbers.phonenumberutil.NumberParseException:
+            raise exceptions.ValidationError(
+                {"phone_number": "Ungültige Telefonnummer"}
+            )
+        except Exception as ex:
+            raise ex
         try:
             client.verify.services(settings.TWILIO_SERVICE_ID).verifications.create(
                 to=phone_number, channel="sms"
@@ -38,6 +53,12 @@ class LoginSerializer(serializers.Serializer):
         phone_number = attrs.get("phone_number")
         code = attrs.get("code")
         name = attrs.get("name")
+        try:
+            parsed_phone_number = phonenumbers.parse(phone_number)
+        except phonenumbers.phonenumberutil.NumberParseException:
+            raise exceptions.ValidationError(
+                {"phone_number": "Ungültige Telefonnummer"}
+            )
         try:
             verification_check = client.verify.services(
                 settings.TWILIO_SERVICE_ID
