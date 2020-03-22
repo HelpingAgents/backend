@@ -63,7 +63,8 @@ def logout(request):
 @permission_classes([])
 def enqueue_call(request):
     resp = VoiceResponse()
-    resp.say("Hallo, dein Anruf wird weitergeleitet", language="de-DE")
+    resp.say("Willlkommen bei der Helping Agents hotline! Wir werden Ihr Anliegen an einen Freiwilligen
+vermitteln.", language="de-DE")
     resp.enqueue(None, workflowSid=settings.TWILIO_WORKFLOW_SID)
     return HttpResponse(str(resp), content_type="application/xml")
 
