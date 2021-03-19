@@ -1,5 +1,5 @@
 git+https://github.com/django/django.git@ffde4d5da88da6ed40ffc090503896d329bc67f8 #  Until 3.1 is released because of SESSION_COOKIE_SAMESITE
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 django-environ==0.4.5
 twilio==6.37.0
 gunicorn==20.0.4
